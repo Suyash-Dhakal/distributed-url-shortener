@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import urlRoutes from './routes/urlRoutes.js';
+import urlRoutes from './src/routes/urlRoutes.js';
 
 dotenv.config();
 const app = express();
