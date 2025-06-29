@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  redis1:
+    image: redis
+    container_name: redis1
+    ports:
+      - "6379:6379"
+    command: redis-server
+
+  redis2:
+    image: redis
+    container_name: redis2
+    ports:
+      - "6380:6379"
+    command: redis-server
+
+  redis3:
+    image: redis
+    container_name: redis3
+    ports:
+      - "6381:6379"
+    command: redis-server
+
+  redis1-slave:
+    image: redis
+    container_name: redis1-slave
+    ports:
+      - "7379:6379"
+    command: redis-server --replicaof redis1 6379
+    depends_on:
+      - redis1
+
+  redis2-slave:
+    image: redis
+    container_name: redis2-slave
+    ports:
+      - "7380:6379"
+    command: redis-server --replicaof redis2 6379
+    depends_on:
+      - redis2
+
+  redis3-slave:
+    image: redis
+    container_name: redis3-slave
+    ports:
+      - "7381:6379"
+    command: redis-server --replicaof redis3 6379
+    depends_on:
+      - redis3
