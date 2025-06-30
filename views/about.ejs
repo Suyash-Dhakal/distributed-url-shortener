@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>About - URL Shortener</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --border-color: #e2e8f0;
+      --accent-color: #3182ce;
+      --accent-hover: #2c5aa0;
+      --success-color: #38a169;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a202c;
+      --bg-secondary: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #cbd5e0;
+      --border-color: #4a5568;
+      --accent-color: #63b3ed;
+      --accent-hover: #4299e1;
+      --success-color: #68d391;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      background: var(--bg-secondary);
+      border-radius: 0.75rem;
+      padding: 0.25rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .theme-btn {
+      padding: 0.5rem 0.75rem;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .theme-btn:hover {
+      background: var(--border-color);
+    }
+
+    .theme-btn.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-link {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-link:hover {
+      color: var(--accent-color);
+      background: var(--border-color);
+      transform: translateX(-2px);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+
+    .content {
+      background: var(--bg-secondary);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .description {
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature-card {
+      background: var(--bg-primary);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .infrastructure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .vm-card {
+      background: var(--bg-primary);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .vm-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .vm-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .vm-details {
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .vm-details li {
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .vm-details li:before {
+      content: "•";
+      color: var(--accent-color);
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    .redis-architecture {
+      background: var(--bg-primary);
+      padding: 2rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    .redis-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .redis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .redis-node {
+      background: var(--bg-secondary);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .redis-node.master {
+      border-color: var(--accent-color);
+      background: rgba(49, 130, 206, 0.1);
+    }
+
+    .redis-node.slave {
+      border-color: var(--success-color);
+      background: rgba(56, 161, 105, 0.1);
+    }
+
+    .node-type {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .security-card {
+      background: var(--bg-primary);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .security-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .tech-stack {
+      margin-top: 2rem;
+    }
+
+    .tech-stack h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      list-style: none;
+    }
+
+    .tech-item {
+      background: var(--accent-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .tech-item:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 2rem;
+      background: var(--accent-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+      margin-top: 2rem;
+      align-self: center;
+    }
+
+    .back-button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .content {
+        padding: 1.5rem;
+      }
+      
+      .features-grid, .infrastructure-grid, .security-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .redis-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .theme-toggle {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-bottom: 1rem;
+        align-self: center;
+      }
+      
+      .nav-link {
+        position: relative;
+        top: auto;
+        left: auto;
+        align-self: flex-start;
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="/" class="nav-link">
+    ← Back to Home
+  </a>
+  
+  <div class="theme-toggle">
+    <button class="theme-btn" data-theme="light">
+      ☀️ Light
+    </button>
+    <button class="theme-btn" data-theme="dark">
+      🌙 Dark
+    </button>
+    <button class="theme-btn active" data-theme="system">
+      💻 System
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>About This Project</h1>
+      <p class="subtitle">A modern, scalable URL shortening service</p>
+    </div>
+
+    <div class="content">
+      <p class="description">
+        This is a high-performance URL shortener built with modern web technologies, 
+        designed for scalability, reliability, and ease of use on Azure cloud infrastructure.
+      </p>
+
+      <!-- Infrastructure Section -->
+      <div class="section">
+        <h2 class="section-title">🏗️ Infrastructure</h2>
+        <div class="infrastructure-grid">
+          <div class="vm-card">
+            <h3 class="vm-title">🖥️ VM1 - Application Server</h3>
+            <ul class="vm-details">
+              <li>Hosts the Node.js application</li>
+              <li>Nginx reverse proxy on port 80</li>
+              <li>PM2 process manager for reliability</li>
+              <li>Forwards requests to Node.js backend</li>
+              <li>Public-facing Azure VM</li>
+            </ul>
+          </div>
+
+          <div class="vm-card">
+            <h3 class="vm-title">💾 VM2 - Redis Server</h3>
+            <ul class="vm-details">
+              <li>Hosts Redis containers via Docker Compose</li>
+              <li>Private IP access only</li>
+              <li>Isolated from public internet</li>
+              <li>Dedicated storage and caching layer</li>
+              <li>High-performance SSD storage</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Redis Cluster Section -->
+      <div class="section">
+        <div class="redis-architecture">
+          <h3 class="redis-title">🔴 Redis Cluster Architecture</h3>
+          <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            3 Masters + 3 Slaves configuration for high availability and read scalability
+          </p>
+          
+          <div class="redis-grid">
+            <div class="redis-node master">
+              <div class="node-type" style="color: var(--accent-color);">Master 1</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">Shard 1 Data</div>
+            </div>
+            <div class="redis-node slave">
+              <div class="node-type" style="color: var(--success-color);">Slave 1</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">Replica of Master 1</div>
+            </div>
+            <div class="redis-node master">
+              <div class="node-type" style="color: var(--accent-color);">Master 2</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">Shard 2 Data</div>
+            </div>
+            <div class="redis-node slave">
+              <div class="node-type" style="color: var(--success-color);">Slave 2</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">Replica of Master 2</div>
+            </div>
+            <div class="redis-node master">
+              <div class="node-type" style="color: var(--accent-color);">Master 3</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">Shard 3 Data</div>
+            </div>
+            <div class="redis-node slave">
+              <div class="node-type" style="color: var(--success-color);">Slave 3</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">Replica of Master 3</div>
+            </div>
+          </div>
+
+          <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+            <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Key Benefits:</h4>
+            <ul class="vm-details">
+              <li>Each master stores a portion of URL mappings using CRC32 sharding</li>
+              <li>Slaves replicate their respective master's data for redundancy</li>
+              <li>Enhanced read scalability by distributing read operations</li>
+              <li>Automatic failover if a master becomes unavailable</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Section -->
+      <div class="section">
+        <h2 class="section-title">🔒 Security</h2>
+        <div class="security-grid">
+          <div class="security-card">
+            <span class="feature-icon">🛡️</span>
+            <h4 class="feature-title">Network Security Groups</h4>
+            <p class="feature-description">
+              Redis access restricted using Azure NSG rules, allowing only VM1 to communicate with VM2 on specific ports.
+            </p>
+          </div>
+
+          <div class="security-card">
+            <span class="feature-icon">🔐</span>
+            <h4 class="feature-title">Private IP Access</h4>
+            <p class="feature-description">
+              Redis cluster accessible only via private IP addresses within the Azure virtual network, isolated from public internet.
+            </p>
+          </div>
+
+          <div class="security-card">
+            <span class="feature-icon">🌐</span>
+            <h4 class="feature-title">Public Nginx Proxy</h4>
+            <p class="feature-description">
+              Only Nginx on VM1 is publicly exposed, acting as a secure gateway and reverse proxy to the Node.js application.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="section">
+        <h2 class="section-title">✨ Features</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon">⚡</span>
+            <h4 class="feature-title">Redis-based Caching</h4>
+            <p class="feature-description">
+              Lightning-fast URL resolution with Redis in-memory caching for optimal performance and low latency.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">🔄</span>
+            <h4 class="feature-title">Data Sharding with CRC32</h4>
+            <p class="feature-description">
+              Manual data sharding using CRC32 hashing ensures even distribution and improved query performance.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">🔗</span>
+            <h4 class="feature-title">Master-Slave Replication</h4>
+            <p class="feature-description">
+              High availability through master-slave replication, ensuring data consistency and fault tolerance.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">🛡️</span>
+            <h4 class="feature-title">Fault Isolation</h4>
+            <p class="feature-description">
+              Robust error handling and fault isolation mechanisms prevent cascading failures across the system.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">📈</span>
+            <h4 class="feature-title">Horizontal Scalability</h4>
+            <p class="feature-description">
+              Designed to scale horizontally, handling increased load by adding more servers seamlessly.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">🐳</span>
+            <h4 class="feature-title">Docker Integration</h4>
+            <p class="feature-description">
+              Containerized Redis deployment with Docker Compose for consistent environments and easy scaling.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-stack">
+        <h3>🛠️ Technology Stack</h3>
+        <ul class="tech-list">
+          <li class="tech-item">Node.js</li>
+          <li class="tech-item">Express.js</li>
+          <li class="tech-item">Redis Cluster</li>
+          <li class="tech-item">Docker Compose</li>
+          <li class="tech-item">Nginx</li>
+          <li class="tech-item">PM2</li>
+          <li class="tech-item">Azure VMs</li>
+          <li class="tech-item">EJS</li>
+          <li class="tech-item">CRC32</li>
+        </ul>
+      </div>
+
+      <a href="/" class="back-button">
+        🏠 Back to Home
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Theme management
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    const html = document.documentElement;
+    
+    // Get saved theme or default to system
+    let currentTheme = localStorage.getItem('theme') || 'system';
+    
+    function applyTheme(theme) {
+      if (theme === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        html.setAttribute('data-theme', systemTheme);
+      } else {
+        html.setAttribute('data-theme', theme);
+      }
+      
+      // Update active button
+      themeButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === theme);
+      });
+      
+      currentTheme = theme;
+      localStorage.setItem('theme', theme);
+    }
+    
+    // Apply saved theme on load
+    applyTheme(currentTheme);
+    
+    // Theme button listeners
+    themeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        applyTheme(button.dataset.theme);
+      });
+    });
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (currentTheme === 'system') {
+        applyTheme('system');
+      }
+    });
+  </script>
+</body>
+</html>

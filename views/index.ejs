@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Shortener</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --text-primary: #1a202c;
+      --text-secondary: #4a5568;
+      --border-color: #e2e8f0;
+      --accent-color: #3182ce;
+      --accent-hover: #2c5aa0;
+      --success-color: #38a169;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1a202c;
+      --bg-secondary: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #cbd5e0;
+      --border-color: #4a5568;
+      --accent-color: #63b3ed;
+      --accent-hover: #4299e1;
+      --success-color: #68d391;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      background: var(--bg-secondary);
+      border-radius: 0.75rem;
+      padding: 0.25rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .theme-btn {
+      padding: 0.5rem 0.75rem;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .theme-btn:hover {
+      background: var(--border-color);
+    }
+
+    .theme-btn.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-container {
+      background: var(--bg-secondary);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+
+    input[type="text"], input[type="number"] {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 0.5rem;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      flex: 1;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+
+    input[type="number"] {
+      flex: 0 0 150px;
+    }
+
+    button {
+      padding: 0.875rem 2rem;
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .result {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .result p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .short-url {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--success-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .short-url:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav-link {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-link:hover {
+      color: var(--accent-color);
+      background: var(--border-color);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .input-row {
+        flex-direction: column;
+      }
+      
+      input[type="number"] {
+        flex: 1;
+      }
+      
+      .theme-toggle {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-bottom: 1rem;
+        align-self: center;
+      }
+      
+      .nav-link {
+        position: relative;
+        top: auto;
+        left: auto;
+        align-self: flex-start;
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="/about" class="nav-link">About</a>
+  
+  <div class="theme-toggle">
+    <button class="theme-btn" data-theme="light">
+      ☀️ Light
+    </button>
+    <button class="theme-btn" data-theme="dark">
+      🌙 Dark
+    </button>
+    <button class="theme-btn active" data-theme="system">
+      💻 System
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>Shorten Your URL</h1>
+      <p class="subtitle">Transform long URLs into short, shareable links</p>
+    </div>
+
+    <div class="form-container">
+      <form method="POST" action="/shorten">
+        <div class="input-group">
+          <label for="url">Long URL</label>
+          <input type="text" id="url" name="url" placeholder="https://example.com/very-long-url" required>
+        </div>
+        
+        <div class="input-group">
+          <label for="ttl">Time to Live (optional)</label>
+          <div class="input-row">
+            <input type="text" value="Enter URL above" readonly style="flex: 2; opacity: 0.6;">
+            <input type="number" id="ttl" name="ttl" placeholder="3600" min="1">
+          </div>
+          <small style="color: var(--text-secondary); font-size: 0.875rem;">TTL in seconds (leave empty for permanent)</small>
+        </div>
+        
+        <button type="submit">✨ Create Short URL</button>
+      </form>
+    </div>
+
+    <% if (shortUrl) { %>
+      <div class="result">
+        <p>🎉 Your short URL is ready!</p>
+        <a href="<%= shortUrl %>" class="short-url" target="_blank">
+          🔗 <%= shortUrl %>
+        </a>
+      </div>
+    <% } %>
+  </div>
+
+  <script>
+    // Theme management
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    const html = document.documentElement;
+    
+    // Get saved theme or default to system
+    let currentTheme = localStorage.getItem('theme') || 'system';
+    
+    function applyTheme(theme) {
+      if (theme === 'system') {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        html.setAttribute('data-theme', systemTheme);
+      } else {
+        html.setAttribute('data-theme', theme);
+      }
+      
+      // Update active button
+      themeButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === theme);
+      });
+      
+      currentTheme = theme;
+      localStorage.setItem('theme', theme);
+    }
+    
+    // Apply saved theme on load
+    applyTheme(currentTheme);
+    
+    // Theme button listeners
+    themeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        applyTheme(button.dataset.theme);
+      });
+    });
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (currentTheme === 'system') {
+        applyTheme('system');
+      }
+    });
+  </script>
+</body>
+</html>

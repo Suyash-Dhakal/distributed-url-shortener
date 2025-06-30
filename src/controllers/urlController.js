@@ -11,8 +11,8 @@ export const shortenUrl= async (req,res)=>{
     try {
         const shortId= shortid.generate();
         await saveUrl(shortId, url, ttl);
-        
-        return res.status(201).json({ shortId, url });
+        const shortUrl = `http://localhost:${process.env.PORT}/${shortId}`;
+        res.render('index', { shortUrl, url });
     } catch (error) {
         console.error('Error shortening URL:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
